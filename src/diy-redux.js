@@ -14,3 +14,12 @@ export function createStore(reducer){
     dispatch({type:'@@init/redux'})
     return {getState,subscribe,dispatch}
 }
+function bindActionCreator(creater,dispatch){
+    return (...args) => dispatch(creater(...args))
+}
+export function bindActionCreators(creaters,dispatch){
+    return Object.keys(creaters).reduce((ret,item)=>{
+        ret[item] = bindActionCreator(creaters[item],dispatch);
+        return ret
+    },{})
+}

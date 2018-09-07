@@ -1,6 +1,7 @@
 import React from 'react';
 import PropType from 'prop-types';
-export const connect = (mapStatetoProps,mapDistchtoProps)=>(WrapperComponent) =>{
+import {bindActionCreators} from './diy-redux';
+export const connect = (mapStatetoProps,mapDispatchoProps)=>(WrapperComponent) =>{
     return class ConnectComponent extends React.Component{
         static contextTypes = {
             store:PropType.object
@@ -13,14 +14,18 @@ export const connect = (mapStatetoProps,mapDistchtoProps)=>(WrapperComponent) =>
         }
         componentDidMount(){
             const {store} = this.context;
+            store.subscribe(()=>this.update());
             this.update()
         }
         update(){
             const {store} = this.context;
-            const storeState = mapStatetoProps(store.getState())
+            const storeState = mapStatetoProps(store.getState());
+            const dispatch = bindActionCreators(mapDispatchoProps,store.dispatch)
             this.setState({
                 props:{
-                    ...storeState
+                    ...this.state.props,
+                    ...dispatch,
+                    ...storeState,
                 }
             })
         }
